@@ -1,7 +1,9 @@
+// app/api/vault/[id]/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import dbConnect from "./../../../../lib/db";
-import VaultItem from "./../../../../models/VaultItem";
+import dbConnect from "@/lib/db";
+import VaultItem from "@/models/VaultItem";
+import User from "@/models/User";
 // import { authOptions } from "@/lib/authOptions";
 
 export async function POST(req: Request) {
@@ -9,9 +11,13 @@ export async function POST(req: Request) {
     await dbConnect();
 
     const session = await getServerSession();
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    // Find the user by email
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const { ciphertext, iv } = await req.json();
     if (!ciphertext || !iv) {
@@ -19,7 +25,7 @@ export async function POST(req: Request) {
     }
 
     const item = await VaultItem.create({
-      userId: session.user.id,
+      userId: user._id,
       ciphertext,
       iv,
     });
@@ -36,11 +42,15 @@ export async function GET() {
     await dbConnect();
 
     const session = await getServerSession();
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const items = await VaultItem.find({ userId: session.user.id });
+    // Find the user by email
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+    const items = await VaultItem.find({ userId: user._id }).sort({ createdAt: -1 });
     return NextResponse.json(items);
   } catch (error) {
     console.error("Vault fetch error:", error);
