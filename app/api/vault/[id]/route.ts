@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import dbConnect from "@/lib/dbConnect";
+import dbConnect from "@/lib/db";
 import VaultItem from "@/models/VaultItem";
-import { authOptions } from "@/lib/authOptions";
+// import { authOptions } from "@/lib/authOptions";
 
 export async function POST(req: Request) {
   try {
     await dbConnect();
 
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user?.id) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -35,7 +35,7 @@ export async function GET() {
   try {
     await dbConnect();
 
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user?.id) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

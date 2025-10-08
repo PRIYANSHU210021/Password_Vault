@@ -6,7 +6,7 @@ const MONGODB_URI = process.env.MONGODB_URI!;
 
 // let isConnected = false;
 
-export const connectDB = async () => {
+ const dbConnect = async () => {
 //   if (isConnected) return;
   try {
     mongoose.connection.on('connected', ()=> console.log("Database  Connected"));
@@ -17,3 +17,4 @@ export const connectDB = async () => {
     console.error("❌ MongoDB connection error:", err);
   }
 };
+export default dbConnect;
