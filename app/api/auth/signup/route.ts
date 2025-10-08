@@ -1,8 +1,8 @@
 // app/api/auth/signup/route.ts
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { connectDB } from "@/lib/db";
-import User from "@/models/User";
+import connectDB  from "./../../../../lib/db";
+import User from "./../../../../models/User";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();

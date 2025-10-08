@@ -1,7 +1,7 @@
 // app/api/vault/route.ts
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
-import VaultItem from "@/models/VaultItem";
+import VaultItem from "./../../../models/VaultItem";
 import jwt from "jsonwebtoken";
 
 // MongoDB connection helper

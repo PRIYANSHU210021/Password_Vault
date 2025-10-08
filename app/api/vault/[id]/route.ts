@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import dbConnect from "@/lib/db";
-import VaultItem from "@/models/VaultItem";
+import dbConnect from "./../../../../lib/db";
+import VaultItem from "./../../../../models/VaultItem";
 // import { authOptions } from "@/lib/authOptions";
 
 export async function POST(req: Request) {
