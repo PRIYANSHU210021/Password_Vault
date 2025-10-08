@@ -44,7 +44,6 @@ export async function GET(req: Request) {
 
 // POST /api/vault
 export async function POST(req: Request) {
-export async function POST(req: Request) {
   try {
     await connectDB();
 
