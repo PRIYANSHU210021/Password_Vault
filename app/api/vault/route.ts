@@ -4,15 +4,19 @@ import mongoose from "mongoose";
 import VaultItem from "./../../../models/VaultItem";
 import jwt from "jsonwebtoken";
 
+
 // MongoDB connection helper
 const connectDB = async () => {
   if (mongoose.connections[0].readyState) return;
   await mongoose.connect(process.env.MONGO_URI!);
 };
 
+import { cookies } from "next/headers";
+
 // Helper to get userId from JWT
-const getUserIdFromJWT = (req: Request) => {
-  const token = req.cookies.get("token")?.value;
+const getUserIdFromJWT = async () => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
   if (!token) return null;
 
   try {
@@ -24,12 +28,9 @@ const getUserIdFromJWT = (req: Request) => {
   }
 };
 
-// GET /api/vault
 export async function GET(req: Request) {
   try {
-    await connectDB();
-
-    const userId = getUserIdFromJWT(req);
+    const userId = await getUserIdFromJWT();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const items = await VaultItem.find({ userId }).sort({ createdAt: -1 });
@@ -39,13 +40,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Failed to fetch vault items" }, { status: 500 });
   }
 }
+}
 
 // POST /api/vault
+export async function POST(req: Request) {
 export async function POST(req: Request) {
   try {
     await connectDB();
 
-    const userId = getUserIdFromJWT(req);
+    const userId = await getUserIdFromJWT();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
